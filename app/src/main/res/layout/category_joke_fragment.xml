@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
-            name="adapter"
-            type="me.aleksandarzekovic.joke.ui.categoryjoke.CategoryJokeAdapter" />
+            name="viewModel"
+            type="me.aleksandarzekovic.joke.ui.categoryjoke.CategoryJokeViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,9 +30,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="25sp"
+                android:text="@string/category_joke"
                 android:textColor="@color/primary_light"
-                android:text="@string/category_joke"></TextView>
+                android:textSize="@dimen/text_size_header" />
 
         </androidx.appcompat.widget.Toolbar>
 
@@ -49,10 +50,14 @@
                 android:id="@+id/category_joke_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="15dp"
-                android:paddingTop="15dp"
-                android:adapter="@{adapter}"
-                android:paddingRight="15dp" />
+                android:paddingLeft="@dimen/padding_15"
+                android:paddingTop="@dimen/padding_15"
+                android:paddingRight="@dimen/padding_15"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:data="@{viewModel.data}"
+                tools:itemCount="5"
+                tools:itemList="@{@layout/item_category}"
+                tools:itemListener="@{viewModel.categoryJokeListener}" />
 
         </androidx.core.widget.NestedScrollView>
 

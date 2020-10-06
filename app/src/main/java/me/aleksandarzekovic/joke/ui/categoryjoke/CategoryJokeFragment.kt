@@ -1,28 +1,35 @@
 package me.aleksandarzekovic.joke.ui.categoryjoke
 
-import android.opengl.Visibility
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputBinding
 import androidx.databinding.DataBindingUtil
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import dagger.android.support.DaggerFragment
 import me.aleksandarzekovic.joke.R
-import me.aleksandarzekovic.joke.data.model.CategoryJoke
 import me.aleksandarzekovic.joke.databinding.CategoryJokeFragmentBinding
+import me.aleksandarzekovic.joke.utils.NetManager
+import javax.inject.Inject
 
-class CategoryJokeFragment : Fragment() {
+class CategoryJokeFragment : DaggerFragment() {
 
     companion object {
         fun newInstance() = CategoryJokeFragment()
     }
 
-    private lateinit var viewModel: CategoryJokeViewModel
+    @Inject
+    lateinit var netManager: NetManager
+    lateinit var viewModel: CategoryJokeViewModel
+
     private lateinit var binding: CategoryJokeFragmentBinding
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(this).get(CategoryJokeViewModel::class.java)
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,29 +40,25 @@ class CategoryJokeFragment : Fragment() {
             container,
             false
         )
-        var view = binding.root
-        return view
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
+        return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(CategoryJokeViewModel::class.java)
-        // TODO: Use the ViewModel
-        val data =  listOf<CategoryJoke>(CategoryJoke("All"), CategoryJoke("Miscellaneous"),
-            CategoryJoke("Programming"), CategoryJoke("Dark"), CategoryJoke("Pun"))
-        populateData(data)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.clickData.observe(this.viewLifecycleOwner, Observer {
+            if(it != null){
+                endCategoryJoke(it.name)
+            }
+        })
         binding.categoryJokeProgressBar.visibility = View.INVISIBLE
-
     }
 
-    private fun populateData(listResults: List<CategoryJoke>) {
-        var recyclerView = binding.categoryJokeRecyclerView
-        val layoutManager = LinearLayoutManager(this.context)
-        layoutManager.orientation = LinearLayoutManager.VERTICAL
-        recyclerView.layoutManager = layoutManager
-
-        var fillRecylerView = CategoryJokeAdapter(listResults)
-        binding.adapter = fillRecylerView
+    private fun endCategoryJoke(name: String){
+        findNavController().navigate(CategoryJokeFragmentDirections.actionCategoryJokeFragmentToJokeFragment(name))
+        viewModel.resetData()
     }
+
 
 }

@@ -12,7 +12,9 @@
         tools:layout="@layout/splash_fragment" >
         <action
             android:id="@+id/action_splashFragment_to_categoryJokeFragment"
-            app:destination="@id/categoryJokeFragment" />
+            app:destination="@id/categoryJokeFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/categoryJokeFragment"
@@ -21,11 +23,15 @@
         tools:layout="@layout/category_joke_fragment" >
         <action
             android:id="@+id/action_categoryJokeFragment_to_jokeFragment"
-            app:destination="@id/jokeFragment" />
+            app:destination="@id/jokeFragment"/>
     </fragment>
     <fragment
         android:id="@+id/jokeFragment"
         android:name="me.aleksandarzekovic.joke.ui.joke.JokeFragment"
         android:label="joke_fragment"
-        tools:layout="@layout/joke_fragment" />
+        tools:layout="@layout/joke_fragment" >
+        <argument
+            android:name="category"
+            app:argType="string" />
+    </fragment>
 </navigation>
